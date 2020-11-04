@@ -4,7 +4,7 @@ Support up to Navicat 15.
 
 ## 1. Prerequisties
 
-Assuming everything was downloadeds in download directory (Example: `~/Downloads/`).
+Assuming everything was downloaded in downloads directory (Example: `~/Downloads/`).
 
    * [git](https://git-scm.com/downloads/)
    * [Navicat 15](https://www.navicat.com/en/download/navicat-premium)
