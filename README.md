@@ -11,7 +11,7 @@ Assuming everything was downloadeds in download directory (Example: `~/Downloads
    * capstone
    * [keystone](https://github.com/keystone-engine/keystone)
    * rapidjson
-   * [repository](https://github.com/)
+   * [clone this repository](https://github.com/FuLygon/Navicat-Linux)
 
    ```bash
    # install git
@@ -37,7 +37,7 @@ Assuming everything was downloadeds in download directory (Example: `~/Downloads
    $ sudo apt-get install rapidjson-dev
 
    # clone this repository
-   $ git clone https://github.com/FuLygon/navicat-linux.git
+   $ git clone https://github.com/FuLygon/Navicat-Linux.git
    ```
 
 ## 2. Installing Navicat
