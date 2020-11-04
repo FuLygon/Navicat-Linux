@@ -359,4 +359,4 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    ```bash
    alias navicat='/opt/navicat/AppRun'
    ```
-   Then open terminal and type `navicat`, Navicat should open up.
+   Then open terminal and type `navicat`. Navicat should open up.
