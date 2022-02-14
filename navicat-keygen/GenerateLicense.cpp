@@ -194,7 +194,7 @@ namespace nkg {
         response_code.resize((cipher.bits() + 7) / 8);
         response_code.resize(cipher.private_encrypt(u8_response_info.data(), u8_response_info.size(), response_code.data(), RSA_PKCS1_PADDING));
 
-        resource_wrapper license_file{ resource_traits::unix_os::file_descriptor{}, open("license_file", O_WRONLY | O_CREAT) };
+        resource_wrapper license_file{ resource_traits::unix_os::file_descriptor{}, open("license_file", O_WRONLY | O_CREAT | O_TRUNC, 0666) };
         if (!license_file.is_valid()) {
             throw exceptions::unix_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), errno, u8"open failed.");
         }
