@@ -22,7 +22,7 @@ see [here](doc/how-to-build.md).
 
 ## 3. How to use?
 
-see [here](doc/how-to-use.md). (WAIT TO BE DONE)
+see [here](doc/how-to-use.md).
 
 ## 4. Contributor
 

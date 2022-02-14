@@ -20,7 +20,7 @@ $ git clone -b linux --single-branch https://notabug.org/doublesine/navicat-keyg
 
 ## 3. 如何使用这个注册机？
 
-见[这里](doc/how-to-use.zh-CN.md)。（待完成）
+见[这里](doc/how-to-use.zh-CN.md)。
 
 ## 4. 贡献者
 
