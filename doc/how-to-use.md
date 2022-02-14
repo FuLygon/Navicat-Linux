@@ -130,46 +130,46 @@
    You will be asked to select Navicat language and give major version number. After that an randomly generated __snKey__ will be given.
 
    ```
-   **********************************************************
-   *       Navicat Keygen (Linux) by @DoubleLabyrinth       *
-   *                   Version: 1.0                         *
-   **********************************************************
+   ***************************************************
+   *       navicat-keygen by @DoubleLabyrinth        *
+   *                version: 16.0.7.0                *
+   ***************************************************
 
    [*] Select Navicat product:
-   0. DataModeler
-   1. Premium
-   2. MySQL
-   3. PostgreSQL
-   4. Oracle
-   5. SQLServer
-   6. SQLite
-   7. MariaDB
-   8. MongoDB
-   9. ReportViewer
+    0. DataModeler
+    1. Premium
+    2. MySQL
+    3. PostgreSQL
+    4. Oracle
+    5. SQLServer
+    6. SQLite
+    7. MariaDB
+    8. MongoDB
+    9. ReportViewer
 
    (Input index)> 1
 
    [*] Select product language:
-   0. English
-   1. Simplified Chinese
-   2. Traditional Chinese
-   3. Japanese
-   4. Polish
-   5. Spanish
-   6. French
-   7. German
-   8. Korean
-   9. Russian
-   10. Portuguese
+    0. English
+    1. Simplified Chinese
+    2. Traditional Chinese
+    3. Japanese
+    4. Polish
+    5. Spanish
+    6. French
+    7. German
+    8. Korean
+    9. Russian
+    10. Portuguese
 
    (Input index)> 0
-
+   
    [*] Input major version number:
-   (range: 0 ~ 15, default: 12)> 15
-
+   (range: 11 ~ 16, default: 16)> 16
+   
    [*] Serial number:
-   NAVM-RTVJ-EO42-IODD
-
+   NAVB-EZF4-7T7X-9MPG
+   
    [*] Your name:
    ```
 
@@ -177,9 +177,9 @@
 
    Then you will be asked to input `Your name` and `Your organization`. Just set them whatever you want, but not too long.
 
-   ```console
-   [*] Your name: DoubleLabyrinth
-   [*] Your organization: DoubleLabyrinth
+   ```
+   [*] Your name: Double Sine
+   [*] Your organization: PremiumSoft CyberTech Ltd.
 
    [*] Input request code in Base64: (Double press ENTER to end)
    ```
@@ -194,18 +194,18 @@
 
 10. Copy your request code and paste it in the keygen. Input empty line to tell the keygen that your input ends.
 
-    ```console
+    ```
     [*] Input request code in Base64: (Double press ENTER to end)
-    OaGPC3MNjJ/pINbajFzLRkrV2OaSXYLr2tNLDW0fIthPOJQFXr84OOroCY1XN8R2xl2j7epZ182PL6q+BRaSC6hnHev/cZwhq/4LFNcLu0T0D/QUhEEBJl4QzFr8TlFSYI1qhWGLIxkGZggA8vMLMb/sLHYn9QebBigvleP9dNCS4sO82bilFrKFUtq3ch8r7V3mbcbXJCfLhXgrHRvT2FV/s1BFuZzuWZUujxlp37U6Y2PFD8fQgsgBUwrxYbF0XxnXKbCmvtgh2yaB3w9YnQLoDiipKp7io1IxEFMYHCpjmfTGk4WU01mSbdi2OS/wm9pq2Y62xvwawsq1WQJoMg==
+    ds7CnjEnNL+8Rme9Q5iD+3t9Tfuq9W6FzVN/3UZwC5zzecmM9EwyHJuZSovKJNSBTzL6AiGyxliTuKPWmLqAdwiKGLuD+mSaZ0syk0jTakVbXmbAk9maFkTz8SK5jMwnQVM/WBZcI0z2Jg1GnOCZVClu/Lo3/WF+XncS+alc2gshG9dUaI44Cqfvp/u1/EYso5fX/bjeBXaFW1/zj+uuRjVv5l0gt7JsTh9byGVxSDTO4zI64Iz9+58QYCbI9zKM+3G9Gou0UlNKjDYw4gN5+4dpiWAjitVTcL3oQzvflgAXjGlT/P6MA+8Xb5PEPJrEdxsErJObxBhO4cTH52wKoQ==
 
     [*] Request Info:
-    {"K":"NAVMRTVJEO42IODD", "DI":"4A12F84C6A088104D23E", "P":"linux"}
+    {"K":"NAVBEZF47T7X9MPG", "DI":"AFCFB038A240942D8776", "P":"linux"}
 
     [*] Response Info:
-    {"K":"NAVMRTVJEO42IODD","DI":"4A12F84C6A088104D23E","N":"DoubleLabyrinth","O":"DoubleLabyrinth","T":1575543648}
+    {"K":"NAVBEZF47T7X9MPG","DI":"AFCFB038A240942D8776","N":"Double Sine","O":"PremiumSoft CyberTech Ltd.","T":1644837835}
 
     [*] Activation Code:
-    i45HIr7T1g69Cm9g3bN1DBpM/Zio8idBw3LOFGXFQjXj0nPfy9yRGuxaUBQkWXSOWa5EAv7S9Z1sljlkZP6cKdfDGYsBb/4N1W5Oj1qogzNtRo5LGwKe9Re3zPY3SO8RXACfpNaKjdjpoOQa9GjQ/igDVH8r1k+Oc7nEnRPZBm0w9aJIM9kS42lbjynVuOJMZIotZbk1NloCodNyRQw3vEEP7kq6bRZsQFp2qF/mr+hIPH8lo/WF3hh+2NivdrzmrKKhPnoqSgSsEttL9a6ueGOP7Io3j2lAFqb9hEj1uC3tPRpYcBpTZX7GAloAENSasFwMdBIdszifDrRW42wzXw==
+    OY8Ib0brsepeS99it4s4WTDPQuKgu93WembLJ0bzr6M30Wh24reH1/ocaZ2Ek1bRBi5lqu2xBv/MpAcFUlstJANtavArkFnXYv0ZZiF3VF70De5GMe/VjkreNhjCGtTZcQKr8fabBTPjJuN0P+Hi1xWwMs9zJMuH+MJTmCQpbM4gu86YrFK/EDcdHtA4ZFgUI0SgYW8lwFausLFHp7C4uIQNbjtv4KP3XolDUrAx4lqg6bklgZ9C8ZjUpg28VVR9Ym37b1Fup7Y7C8OjmmMiAp8N5z8m6cA/EjcSLfLOMGf8jsAK0GHz5/AGUqAXWifv9h9cxPA35UgytqI9F2IH/Q==
     ```
 
 11. Finally, you will get __Activation Code__ which looks like a Base64 string.
