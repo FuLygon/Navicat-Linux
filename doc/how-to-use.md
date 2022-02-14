@@ -1,6 +1,6 @@
 # navicat-keygen for linux - How to use?
 
-[中文版](how-to-build.zh-CN.md)
+[中文版](how-to-use.zh-CN.md)
 
 1. Download navicat from official website and you will get an AppImage file. For example, a file named `navicat16-premium-en.AppImage`. I assume that the AppImage file is located in `~/` folder.
 
