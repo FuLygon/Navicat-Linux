@@ -108,23 +108,23 @@
 
    ```
    Usage:
-       navicat-keygen <-bin|-text> [-adv] <RSA-2048 Private Key File>
-
-           <-bin|-text>                  Specify "-bin" to generate "license_file" used by Navicat 11.
-                                         Specify "-text" to generate base64-encoded activation code.
-                                         This parameter must be specified.
-
-           [-adv]                        Enable advance mode.
-                                         This parameter is optional.
-
-           <RSA-2048 Private Key File>   A path to an RSA-2048 private key file.
-                                         This parameter must be specified.
+       navicat-keygen <--bin|-text> [--adv] <RSA-2048 private key file>
+   
+       <--bin|--text>     Specify "--bin" to generate "license_file" used by Navicat 11.
+                          Specify "--text" to generate base64-encoded activation code.
+                          This parameter is mandatory.
+   
+       [--adv]            Enable advance mode.
+                          This parameter is optional.
+   
+       <RSA-2048 private key file>    A path to an RSA-2048 private key file.
+                                      This parameter is mandatory.
    ```
 
    __Example:__
 
    ```bash
-   $ ./navicat-keygen -text ./RegPrivateKey.pem
+   $ ./navicat-keygen --text ./RegPrivateKey.pem
    ```
 
    You will be asked to select Navicat language and give major version number. After that an randomly generated __snKey__ will be given.

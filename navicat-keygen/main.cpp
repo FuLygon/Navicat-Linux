@@ -9,7 +9,7 @@
 #include "navicat_serial_generator.hpp"
 #include "rsa_cipher.hpp"
 
-#define NKG_CURRENT_SOURCE_FILE() u8".\\navicat-keygen\\wmain.cpp"
+#define NKG_CURRENT_SOURCE_FILE() ".\\navicat-keygen\\wmain.cpp"
 #define NKG_CURRENT_SOURCE_LINE() __LINE__
 
 namespace nkg {
@@ -32,20 +32,20 @@ void welcome() {
 
 void help() {
     puts("Usage:");
-    puts("    navicat-keygen.exe <-bin|-text> [-adv] <RSA-2048 Private Key File>");
+    puts("    navicat-keygen <--bin|-text> [--adv] <RSA-2048 private key file>");
     puts("");
-    puts("    <-bin|-text>       Specify \"-bin\" to generate \"license_file\" used by Navicat 11.");
-    puts("                       Specify \"-text\" to generate base64-encoded activation code.");
-    puts("                       This parameter must be specified.");
+    puts("    <--bin|--text>     Specify \"--bin\" to generate \"license_file\" used by Navicat 11.");
+    puts("                       Specify \"--text\" to generate base64-encoded activation code.");
+    puts("                       This parameter is mandatory.");
     puts("");
-    puts("    [-adv]             Enable advance mode.");
+    puts("    [--adv]            Enable advance mode.");
     puts("                       This parameter is optional.");
     puts("");
-    puts("    <RSA-2048 Private Key File>    A path to an RSA-2048 private key file.");
-    puts("                                   This parameter must be specified.");
+    puts("    <RSA-2048 private key file>    A path to an RSA-2048 private key file.");
+    puts("                                   This parameter is mandatory.");
     puts("");
     puts("Example:");
-    puts("    navicat-keygen.exe -text .\\RegPrivateKey.pem");
+    puts("    navicat-keygen --text ./RegPrivateKey.pem");
 }
 
 int main(int argc, char* argv[]) {
@@ -55,24 +55,22 @@ int main(int argc, char* argv[]) {
         nkg::fnCollectInformation lpfnCollectInformation;
         nkg::fnGenerateLicense lpfnGenerateLicense;
 
-        if (strcmp(argv[1], "-bin") == 0) {
+        if (strcmp(argv[1], "--bin") == 0) {
             lpfnGenerateLicense = nkg::GenerateLicenseBinary;
-        } else if (strcmp(argv[1], "-text") == 0) {
+        } else if (strcmp(argv[1], "--text") == 0) {
             lpfnGenerateLicense = nkg::GenerateLicenseText;
         } else {
             help();
             return -1;
         }
 
-        if (argc == 4) {
-            if (strcmp(argv[2], "-adv") == 0) {
-                lpfnCollectInformation = nkg::CollectInformationAdvanced;
-            } else {
-                help();
-                return -1;
-            }
-        } else {
+        if (argc == 3) {
             lpfnCollectInformation = nkg::CollectInformationNormal;
+        } else if (argc == 4 && strcmp(argv[2], "--adv") == 0) {
+            lpfnCollectInformation = nkg::CollectInformationAdvanced;
+        } else {
+            help();
+            return -1;
         }
 
         try {
@@ -80,8 +78,8 @@ int main(int argc, char* argv[]) {
 
             cipher.import_private_key_file(argv[argc - 1]);
             if (cipher.bits() != 2048) {
-                throw nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"RSA key length mismatches.")
-                    .push_hint(u8"You must provide an RSA key whose modulus length is 2048 bits.");
+                throw nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), "RSA key length != 2048 bits.")
+                    .push_hint("You must provide an RSA key whose modulus length is 2048 bits.");
             }
 
             auto sn_generator = lpfnCollectInformation();
