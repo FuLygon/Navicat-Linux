@@ -8,10 +8,10 @@
    $ sudo apt-get install cmake
    ```
 
-2. 安装 `fmt`、`OpenSSL`、`rapidjson` 和 `cxxopts`:
+2. 安装 `fmt`、`OpenSSL` 和 `rapidjson`:
 
    ```bash
-   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev libcxxopts-dev
+   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev
    ```
 
 ## 2. 编译

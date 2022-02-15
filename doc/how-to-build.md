@@ -10,10 +10,10 @@
    $ sudo apt-get install cmake
    ```
 
-2. Install `fmt`, `OpenSSL`, `rapidjson` and `cxxopts`:
+2. Install `fmt`, `OpenSSL` and `rapidjson`:
 
    ```bash
-   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev libcxxopts-dev
+   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev
    ```
 
 ## 2. Build

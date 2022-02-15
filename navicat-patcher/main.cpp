@@ -10,7 +10,6 @@
 #include <optional>
 
 #include <fmt/format.h>
-#include <cxxopts.hpp>
 
 #include "resource_wrapper.hpp"
 #include "resource_traits/cxx_object_traits.hpp"
@@ -26,7 +25,7 @@
 #include "exceptions/unix_exception.hpp"
 #include "exceptions/operation_canceled_exception.hpp"
 
-#define NKG_CURRENT_SOURCE_FILE() u8".\\navicat-patcher\\main.cpp"
+#define NKG_CURRENT_SOURCE_FILE() ".\\navicat-patcher\\main.cpp"
 #define NKG_CURRENT_SOURCE_LINE() __LINE__
 
 void welcome() {
@@ -34,6 +33,59 @@ void welcome() {
     puts("*       navicat-patcher by @DoubleLabyrinth       *");
     puts("*               version: 16.0.7.0                 *");
     puts("***************************************************");
+    puts("");
+}
+
+void help() {
+    puts("Usage:");
+    puts("    navicat-patcher [--dry-run] <Navicat root directory> [RSA-2048 private key file]");
+    puts("");
+    puts("    [--dry-run]                   Run patcher without applying any patches.");
+    puts("                                  This parameter is optional.");
+    puts("");
+    puts("    <Navicat root directory>      Path to a directory where Navicat locates.");
+    puts("                                  This parameter is mandatory.");
+    puts("");
+    puts("    [RSA-2048 private key file]   Path to an RSA-2048 private key file.");
+    puts("                                  If not specified, an RSA-2048 private key file");
+    puts("                                      named \"RegPrivateKey.pem\" will be generated.");
+    puts("                                  This parameter is optional.");
+    puts("");
+    puts("Example:");
+    puts("    ./navicat-patcher ~/navicat16-premium-en-patched");
+    puts("");
+}
+
+bool parse_cmdline(int argc, char* argv[], bool& dry_run, std::filesystem::path& navicat_root, std::filesystem::path& rsa_keyfile) {
+    if (argc == 2) {
+        dry_run = false;
+        navicat_root = argv[1];
+        rsa_keyfile.clear();
+        return true;
+    } else if (argc == 3) {
+        if (strcmp(argv[1], "--dry-run") == 0) {
+            dry_run = true;
+            navicat_root = argv[2];
+            rsa_keyfile.clear();
+            return true;
+        } else {
+            dry_run = false;
+            navicat_root = argv[1];
+            rsa_keyfile = argv[2];
+            return true;
+        }
+    } else if (argc == 4) {
+        if (strcmp(argv[1], "--dry-run") == 0) {
+            dry_run = true;
+            navicat_root = argv[2];
+            rsa_keyfile = argv[3];
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 void select_patch_solutions(nkg::resource_wrapper<nkg::resource_traits::cxx_object_traits<nkg::patch_solution>>& solution0) {
@@ -79,7 +131,7 @@ void detect_backup(const std::filesystem::path& file_path) {
                 std::filesystem::remove(backup_path);
                 break;
             } else if (select == 'N' || select == 'n') {
-                throw nkg::exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Backup file still exists. Patch abort!");
+                throw nkg::exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), "Backup file still exists. Patch abort!");
             } else {
                 continue;
             }
@@ -104,33 +156,14 @@ int main(int argc, char* argv[]) {
     std::filesystem::path navicat_root;
     std::filesystem::path rsa_key_file;
 
-    cxxopts::Options cmd_parser{ "navicat-patcher" };
-    cmd_parser.add_options()
-        ("dry-run", "Run patcher without applying any patches", cxxopts::value(dry_run))
-        ("navicat-root", "Navicat root directory", cxxopts::value(navicat_root))
-        ("rsa-key-file", "RSA-2048 private key file", cxxopts::value(rsa_key_file))
-        ("h,help", "Print help");
-
-    cmd_parser.positional_help("<navicat root path> [RSA-2048 private key file]");
-    cmd_parser.parse_positional({ "navicat-root", "rsa-key-file" });
+    if (!parse_cmdline(argc, argv, dry_run, navicat_root, rsa_key_file)) {
+        help();
+        return -1;
+    }
 
     try {
-        auto cmd_result = cmd_parser.parse(argc, argv);
-
-        if (cmd_result.count("help")) {
-            puts(cmd_parser.help().c_str());
-            return 0;
-        }
-
-        if (cmd_result.count("navicat-root") == 0) {
-            puts(cmd_parser.help().c_str());
-            return 0;
-        }
-
-        puts("");
-
         if (!std::filesystem::is_directory(navicat_root)) {
-            throw nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), "Navicat root path doesn't point to a directory.")
+            throw nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), "Navicat root directory path doesn't point to a directory.")
                 .push_hint("Are you sure the path you specified is correct?")
                 .push_hint(fmt::format("The path you specified: {}", navicat_root.native()));
         }
@@ -210,7 +243,7 @@ int main(int argc, char* argv[]) {
         } else {
             // save private key if not given
             if (rsa_key_file.empty()) {
-                cipher.export_private_key_file(u8"RegPrivateKey.pem");
+                cipher.export_private_key_file("RegPrivateKey.pem");
             }
 
             // detecting backups
@@ -243,9 +276,6 @@ int main(int argc, char* argv[]) {
         }
 
         return 0;
-    } catch (cxxopts::OptionException&) {
-        puts(cmd_parser.help().c_str());
-        return -1;
     } catch (nkg::exception& e) {
         printf("[-] %s:%d ->\n", e.source_file().c_str(), e.source_line());
         printf("    %s\n", e.custom_message().c_str());
