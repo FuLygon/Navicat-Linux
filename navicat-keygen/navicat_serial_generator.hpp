@@ -35,11 +35,7 @@ namespace nkg {
 
     class navicat_serial_generator {
     public:
-        class version_error : public ::nkg::exception {
-        public:
-            version_error(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
+        class version_error;
 
     private:
         static inline const DES_cblock s_des_key0 = { 0x64, 0xAD, 0xF3, 0x2F, 0xAE, 0xF2, 0x1A, 0x27 };
@@ -70,6 +66,10 @@ namespace nkg {
 
         [[nodiscard]]
         const std::string& serial_number_formatted() const noexcept;
+    };
+
+    class navicat_serial_generator::version_error : public ::nkg::exception {
+        using ::nkg::exception::exception;
     };
 
 }

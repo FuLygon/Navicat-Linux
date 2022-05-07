@@ -12,33 +12,7 @@ namespace nkg {
 
     class keystone_assembler {
     public:
-        class backend_error : public ::nkg::exception {
-        public:
-            using error_code_t = ks_err;
-
-        private:
-            error_code_t m_error_code;
-            std::string m_error_string;
-
-        public:
-            backend_error(std::string_view file, int line, error_code_t keystone_err, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message), m_error_code(keystone_err), m_error_string(ks_strerror(keystone_err)) {}
-
-            [[nodiscard]]
-            virtual bool error_code_exists() const noexcept override {
-                return true;
-            }
-
-            [[nodiscard]]
-            virtual intptr_t error_code() const noexcept override {
-                return m_error_code;
-            }
-
-            [[nodiscard]]
-            virtual const std::string& error_string() const noexcept override {
-                return m_error_string;
-            }
-        };
+        class backend_error;
 
     private:
         resource_wrapper<resource_traits::keystone::keystone_handle> m_keystone_engine;
@@ -50,6 +24,34 @@ namespace nkg {
 
         [[nodiscard]]
         std::vector<uint8_t> assemble(std::string_view asm_string, uint64_t asm_address = 0) const;
+    };
+
+    class keystone_assembler::backend_error : public ::nkg::exception {
+    public:
+        using error_code_t = ks_err;
+
+    private:
+        error_code_t m_error_code;
+        std::string m_error_string;
+
+    public:
+        backend_error(std::string_view file, int line, error_code_t keystone_err, std::string_view message) noexcept :
+            ::nkg::exception(file, line, message), m_error_code(keystone_err), m_error_string(ks_strerror(keystone_err)) {}
+
+        [[nodiscard]]
+        virtual bool error_code_exists() const noexcept override {
+            return true;
+        }
+
+        [[nodiscard]]
+        virtual intptr_t error_code() const noexcept override {
+            return m_error_code;
+        }
+
+        [[nodiscard]]
+        virtual const std::string& error_string() const noexcept override {
+            return m_error_string;
+        }
     };
 
 }

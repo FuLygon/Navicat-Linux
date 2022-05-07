@@ -18,23 +18,9 @@ namespace nkg {
         using rva_t = uintptr_t;
         using va_t = uintptr_t;
 
-        class parse_error : public ::nkg::exception {
-        public:
-            parse_error(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
-
-        class bad_fo_exception : public ::nkg::exception {
-        public:
-            bad_fo_exception(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
-
-        class bad_va_exception : public ::nkg::exception {
-        public:
-            bad_va_exception(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
+        class parse_error;
+        class bad_fo_exception;
+        class bad_va_exception;
 
     private:
         size_t m_elf_size;
@@ -234,6 +220,18 @@ namespace nkg {
 
         [[nodiscard]]
         const std::map<va_t, size_t>& relocation_distribute() const;
+    };
+
+    class elf64_interpreter::parse_error : public ::nkg::exception {
+        using ::nkg::exception::exception;
+    };
+
+    class elf64_interpreter::bad_fo_exception : public ::nkg::exception {
+        using ::nkg::exception::exception;
+    };
+
+    class elf64_interpreter::bad_va_exception : public ::nkg::exception {
+        using ::nkg::exception::exception;
     };
 
 }

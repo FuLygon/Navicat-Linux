@@ -11,11 +11,7 @@ namespace nkg {
         static constexpr const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
         static constexpr const char padding_character = '=';
 
-        class decoding_error : public ::nkg::exception {
-        public:
-            decoding_error(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
+        class decoding_error;
 
         static char symbol(alphabet_index_t idx);
 
@@ -26,6 +22,10 @@ namespace nkg {
         static std::string encode(const void* data_ptr, size_t data_size);
 
         static std::vector<uint8_t> decode(std::string_view b32_string);
+    };
+
+    class base32_rfc4648::decoding_error : public ::nkg::exception {
+        using ::nkg::exception::exception;
     };
 
 }

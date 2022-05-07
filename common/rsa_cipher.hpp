@@ -17,42 +17,8 @@ namespace nkg {
 
     class rsa_cipher {
     public:
-        class no_key_assigned_error : public ::nkg::exception {
-        public:
-            no_key_assigned_error(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-        };
-
-        class backend_error : public ::nkg::exception {
-        public:
-            using error_code_t = decltype(ERR_get_error());
-
-        private:
-            std::optional<error_code_t> m_error_code;
-            std::string m_error_string;
-
-        public:
-            backend_error(std::string_view file, int line, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message) {}
-
-            backend_error(std::string_view file, int line, error_code_t openssl_errno, std::string_view message) noexcept :
-                ::nkg::exception(file, line, message), m_error_code(openssl_errno) {}
-
-            [[nodiscard]]
-            virtual bool error_code_exists() const noexcept override {
-                return m_error_code.has_value();
-            }
-
-            [[nodiscard]]
-            virtual intptr_t error_code() const noexcept override {
-                if (error_code_exists()) { return m_error_code.value(); } else { trap_then_terminate(); }
-            }
-
-            [[nodiscard]]
-            virtual const std::string& error_string() const noexcept override {
-                if (error_code_exists()) { return m_error_string; } else { trap_then_terminate(); }
-            }
-        };
+        class backend_error;
+        class no_key_assigned_error;
 
     private:
         resource_wrapper<resource_traits::openssl::rsa> m_rsa;
@@ -73,7 +39,6 @@ namespace nkg {
         static void _write_public_key_pkcs1_to_bio(RSA* p_rsa, BIO* p_bio);
 
     public:
-
         rsa_cipher();
 
         [[nodiscard]]
@@ -115,6 +80,41 @@ namespace nkg {
         size_t public_decrypt(const void* ciphertext, size_t ciphertext_size, void* plaintext, int padding) const;
 
         size_t private_decrypt(const void* ciphertext, size_t ciphertext_size, void* plaintext, int padding) const;
+    };
+
+    class rsa_cipher::backend_error : public ::nkg::exception {
+    public:
+        using error_code_t = decltype(ERR_get_error());
+
+    private:
+        std::optional<error_code_t> m_error_code;
+        std::string m_error_string;
+
+    public:
+        backend_error(std::string_view file, int line, std::string_view message) noexcept :
+            ::nkg::exception(file, line, message) {}
+
+        backend_error(std::string_view file, int line, error_code_t openssl_errno, std::string_view message) noexcept :
+            ::nkg::exception(file, line, message), m_error_code(openssl_errno) {}
+
+        [[nodiscard]]
+        virtual bool error_code_exists() const noexcept override {
+            return m_error_code.has_value();
+        }
+
+        [[nodiscard]]
+        virtual intptr_t error_code() const noexcept override {
+            if (error_code_exists()) { return m_error_code.value(); } else { trap_then_terminate(); }
+        }
+
+        [[nodiscard]]
+        virtual const std::string& error_string() const noexcept override {
+            if (error_code_exists()) { return m_error_string; } else { trap_then_terminate(); }
+        }
+    };
+
+    class rsa_cipher::no_key_assigned_error : public ::nkg::exception {
+        using ::nkg::exception::exception;
     };
 
 }
