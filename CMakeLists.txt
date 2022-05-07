@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.18)
-project(navicat_keygen)
+project(navicat-keygen)
 
 set(CMAKE_CXX_STANDARD 17)
+
+find_package(fmt REQUIRED)
+find_package(RapidJSON REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 include(FetchContent)
 set(KEYSTONE_BUILD_STATIC_RUNTIME ON CACHE BOOL "" FORCE)
@@ -38,6 +42,11 @@ set(
         ./common/resource_traits/openssl/bio.hpp
         ./common/resource_traits/openssl/bio_chain.hpp
         ./common/resource_traits/openssl/rsa.hpp
+        ./common/resource_traits/openssl/evp_pkey.hpp
+        ./common/resource_traits/openssl/evp_pkey_ctx.hpp
+        ./common/resource_traits/openssl/evp_cipher_ctx.hpp
+        ./common/resource_traits/openssl/encoder_ctx.hpp
+        ./common/resource_traits/openssl/decoder_ctx.hpp
         ./common/resource_traits/unicorn/unicorn_handle.hpp
         ./common/resource_traits/unicorn/unicorn_alloc.hpp
         ./common/resource_traits/unix_os/file_descriptor.hpp
@@ -76,9 +85,9 @@ set(
 )
 
 add_executable(navicat-keygen ${NKG_COMMON_SOURCE} ${NKG_KEYGEN_SOURCE})
-target_include_directories(navicat-keygen PRIVATE ./common)
-target_link_libraries(navicat-keygen fmt crypto)
+target_include_directories(navicat-keygen PRIVATE ./common ${RAPIDJSON_INCLUDE_DIRS})
+target_link_libraries(navicat-keygen fmt::fmt OpenSSL::Crypto)
 
 add_executable(navicat-patcher ${NKG_COMMON_SOURCE} ${NKG_PATCHER_SOURCE})
 target_include_directories(navicat-patcher PRIVATE ./common ${keystone_SOURCE_DIR}/include)
-target_link_libraries(navicat-patcher fmt crypto keystone unicorn pthread)
+target_link_libraries(navicat-patcher fmt::fmt OpenSSL::Crypto keystone unicorn pthread)

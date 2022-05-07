@@ -6,7 +6,14 @@
 #include <openssl/rsa.h>
 
 #include "resource_wrapper.hpp"
+#if (OPENSSL_VERSION_NUMBER & 0xf0000000) < 0x30000000      // for openssl < 3.0.0
 #include "resource_traits/openssl/rsa.hpp"
+#elif (OPENSSL_VERSION_NUMBER & 0xf0000000) == 0x30000000   // for openssl 3.x.x
+#include "resource_traits/openssl/evp_pkey_ctx.hpp"
+#include "resource_traits/openssl/evp_pkey.hpp"
+#else
+#error "rsa_cipher.hpp: Unexpected OpenSSL version."
+#endif
 
 #include "exception.hpp"
 
@@ -21,6 +28,7 @@ namespace nkg {
         class no_key_assigned_error;
 
     private:
+#if (OPENSSL_VERSION_NUMBER & 0xf0000000) < 0x30000000                  // for openssl < 3.0.0
         resource_wrapper<resource_traits::openssl::rsa> m_rsa;
 
         [[nodiscard]]
@@ -37,6 +45,26 @@ namespace nkg {
         static void _write_public_key_pem_to_bio(RSA* p_rsa, BIO* p_bio);
 
         static void _write_public_key_pkcs1_to_bio(RSA* p_rsa, BIO* p_bio);
+#elif (OPENSSL_VERSION_NUMBER & 0xf0000000) == 0x30000000               // for openssl 3.x.x
+        resource_wrapper<resource_traits::openssl::evp_pkey> m_rsa;
+
+        [[nodiscard]]
+        static EVP_PKEY* _read_private_key_from_bio(BIO* p_bio);
+
+        [[nodiscard]]
+        static EVP_PKEY* _read_public_key_pem_from_bio(BIO* p_bio);
+
+        [[nodiscard]]
+        static EVP_PKEY* _read_public_key_pkcs1_from_bio(BIO* p_bio);
+
+        static void _write_private_key_to_bio(EVP_PKEY* p_rsa, BIO* p_bio);
+
+        static void _write_public_key_pem_to_bio(EVP_PKEY* p_rsa, BIO* p_bio);
+
+        static void _write_public_key_pkcs1_to_bio(EVP_PKEY* p_rsa, BIO* p_bio);
+#else
+#error "rsa_cipher.hpp: Unexpected OpenSSL version."
+#endif
 
     public:
         rsa_cipher();
