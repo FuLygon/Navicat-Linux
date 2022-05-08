@@ -435,6 +435,10 @@ namespace nkg {
         }
 
         size_t ciphertext_size = 0;
+        if (EVP_PKEY_encrypt(evp_pkey_context.get(), nullptr, &ciphertext_size, reinterpret_cast<const unsigned char*>(plaintext), plaintext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
+            throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_encrypt failed.");
+        }
+
         if (EVP_PKEY_encrypt(evp_pkey_context.get(), reinterpret_cast<unsigned char*>(ciphertext), &ciphertext_size, reinterpret_cast<const unsigned char*>(plaintext), plaintext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
             throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_encrypt failed.");
         }
@@ -474,6 +478,10 @@ namespace nkg {
         }
 
         size_t ciphertext_size = 0;
+        if (EVP_PKEY_sign(evp_pkey_context.get(), nullptr, &ciphertext_size, reinterpret_cast<const unsigned char*>(plaintext), plaintext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
+            throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_sign failed.");
+        }
+
         if (EVP_PKEY_sign(evp_pkey_context.get(), reinterpret_cast<unsigned char*>(ciphertext), &ciphertext_size, reinterpret_cast<const unsigned char*>(plaintext), plaintext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
             throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_sign failed.");
         }
@@ -514,6 +522,10 @@ namespace nkg {
         }
 
         size_t plaintext_size = 0;
+        if (EVP_PKEY_verify_recover(evp_pkey_context.get(), nullptr, &plaintext_size, reinterpret_cast<const unsigned char*>(ciphertext), ciphertext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
+            throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_verify_recover failed.");
+        }
+
         if (EVP_PKEY_verify_recover(evp_pkey_context.get(), reinterpret_cast<unsigned char*>(plaintext), &plaintext_size, reinterpret_cast<const unsigned char*>(ciphertext), ciphertext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
             throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_verify_recover failed.");
         }
@@ -554,6 +566,10 @@ namespace nkg {
         }
 
         size_t plaintext_size = 0;
+        if (EVP_PKEY_decrypt(evp_pkey_context.get(), nullptr, &plaintext_size, reinterpret_cast<const unsigned char*>(ciphertext), ciphertext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
+            throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_decrypt failed.");
+        }
+
         if (EVP_PKEY_decrypt(evp_pkey_context.get(), reinterpret_cast<unsigned char*>(plaintext), &plaintext_size, reinterpret_cast<const unsigned char*>(ciphertext), ciphertext_size) <= 0) {   // return 1 for success, 0 or a negative value for failure
             throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"EVP_PKEY_decrypt failed.");
         }
