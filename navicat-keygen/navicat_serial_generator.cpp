@@ -5,8 +5,6 @@
 #include <openssl/rand.h>
 #if (OPENSSL_VERSION_NUMBER & 0xf0000000) == 0x30000000     // for openssl 3.x.x
 #include <openssl/provider.h>
-#else
-#error "navicat_serial_generator.cpp: Unexpected OpenSSL version."
 #endif
 
 #include "resource_wrapper.hpp"
@@ -155,8 +153,6 @@ namespace nkg {
                 throw backend_error(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"OSSL_PROVIDER_load failed.");
             }
         }
-#else
-#error "navicat_serial_generator.cpp: Unexpected OpenSSL version."
 #endif
 
         resource_wrapper evp_cipher_context{ resource_traits::openssl::evp_cipher_ctx{}, EVP_CIPHER_CTX_new() };
