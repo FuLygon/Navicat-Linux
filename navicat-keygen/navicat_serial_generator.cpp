@@ -3,7 +3,11 @@
 
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+#if (OPENSSL_VERSION_NUMBER & 0xf0000000) == 0x30000000     // for openssl 3.x.x
 #include <openssl/provider.h>
+#else
+#error "navicat_serial_generator.cpp: Unexpected OpenSSL version."
+#endif
 
 #include "resource_wrapper.hpp"
 #include "resource_traits/openssl/evp_cipher_ctx.hpp"
