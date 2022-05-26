@@ -31,7 +31,7 @@
 void welcome() {
     puts("***************************************************");
     puts("*       navicat-patcher by @DoubleLabyrinth       *");
-    puts("*               version: 16.0.7.0-1               *");
+    puts("*               version: 16.0.7.0-2               *");
     puts("***************************************************");
     puts("");
 }
