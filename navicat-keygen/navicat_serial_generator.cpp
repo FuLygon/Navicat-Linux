@@ -119,6 +119,12 @@ namespace nkg {
             case navicat_software_type::ReportViewer:
                 m_data[7] = 0xb;
                 break;
+            case navicat_software_type::ChartsCreator:
+                m_data[7] = 0x86;
+                break;
+            case navicat_software_type::ChartsViewer:
+                m_data[7] = 0x88;
+                break;
             default:
                 __builtin_unreachable();
         }
@@ -129,7 +135,7 @@ namespace nkg {
     }
 
     void navicat_serial_generator::set_software_version(int ver) {
-        if (11 <= ver && ver < 16) {
+        if (1 <= ver && ver < 16) {
             static_assert(sizeof(m_des_key) == sizeof(s_des_key0));
 
             m_data[8] = static_cast<std::uint8_t>((ver << 4) | (m_data[8] & 0x0f));

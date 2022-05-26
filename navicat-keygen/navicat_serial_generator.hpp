@@ -29,7 +29,9 @@ namespace nkg {
         SQLite,
         MariaDB,
         MongoDB,
-        ReportViewer
+        ReportViewer,
+        ChartsCreator,
+        ChartsViewer
     };
 
     class navicat_serial_generator {
