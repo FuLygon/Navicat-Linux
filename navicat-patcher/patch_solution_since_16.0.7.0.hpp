@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <list>
 #include "patch_solution_since.hpp"
 #include "elf64_interpreter.hpp"
 #include "amd64_emulator.hpp"
@@ -15,6 +16,7 @@ namespace nkg {
         elf64_interpreter::va_t m_va_CSRegistrationInfoFetcher_LINUX_vtable;
         elf64_interpreter::va_t m_va_CSRegistrationInfoFetcher_LINUX_GenerateRegistrationKey;
         elf64_interpreter::va_t m_va_pltgot_std_string_append;
+        std::list<std::pair<elf64_interpreter::va_t, size_t>> m_tracing;
 
         uint64_t _emulator_append_external_api_impl(amd64_emulator& x64_emulator, std::string_view api_name, const std::vector<uint8_t>& api_impl);
 
@@ -31,6 +33,8 @@ namespace nkg {
         void _emulator_free_handler(amd64_emulator& x64_emulator, uint64_t address, size_t size);
 
         static std::string _build_encoded_key(const rsa_cipher& cipher);
+
+        std::list<std::pair<elf64_interpreter::va_t, size_t>> _calculate_reliable_areas() const;
 
     public:
         patch_solution_since(elf64_interpreter& libcc_interpreter);

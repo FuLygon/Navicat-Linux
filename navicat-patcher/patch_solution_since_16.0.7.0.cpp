@@ -134,7 +134,15 @@ namespace nkg {
             reloc_sym_name = &string_table[reloc_sym->st_name];
         }
 
-        if (strcmp(reloc_sym_name, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm") == 0) {
+        if (strcmp(reloc_sym_name, "strlen") == 0) {
+            auto external_api_impl_va =
+                x64_emulator.context_get<std::map<std::string, uint64_t>&>("external_api_impl")["strlen"];
+
+            x64_emulator.mem_write(reloc_va, &external_api_impl_va, sizeof(external_api_impl_va));
+
+            // external api address is resolved, set `qword ptr [rsp] = external_api_impl_va` in order to jump there
+            x64_emulator.mem_write(rsp, &external_api_impl_va, sizeof(external_api_impl_va));
+        } else if (strcmp(reloc_sym_name, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm") == 0) {
             // std::string::_M_append(char const*, unsigned long)
             auto external_api_impl_va =
                 x64_emulator.context_get<std::map<std::string, uint64_t>&>("external_api_impl")["_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm"];
@@ -183,6 +191,15 @@ namespace nkg {
 
             // external api address is resolved, set `qword ptr [rsp] = external_api_impl_va` in order to jump there
             x64_emulator.mem_write(rsp, &external_api_impl_va, sizeof(external_api_impl_va));
+        } else if (strcmp(reloc_sym_name, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv") == 0) {
+            // std::string::_M_dispose()
+            auto external_api_impl_va =
+                x64_emulator.context_get<std::map<std::string, uint64_t>&>("external_api_impl")["_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv"];
+
+            x64_emulator.mem_write(reloc_va, &external_api_impl_va, sizeof(external_api_impl_va));
+
+            // external api address is resolved, set `qword ptr [rsp] = external_api_impl_va` in order to jump there
+            x64_emulator.mem_write(rsp, &external_api_impl_va, sizeof(external_api_impl_va));
         } else {
             printf("[-] patch_solution_since<16, 0, 7, 0>: PLT GOT entry `%s` is not resolved.\n", reloc_sym_name);
             x64_emulator.emu_stop();
@@ -211,6 +228,31 @@ namespace nkg {
         encoded_key = std::regex_replace(encoded_key, std::regex("\n"), "");
 
         return encoded_key;
+    }
+
+    std::list<std::pair<elf64_interpreter::va_t, size_t>> patch_solution_since<16, 0, 7, 0>::_calculate_reliable_areas() const {
+        std::list<std::pair<elf64_interpreter::va_t, size_t>> reliable_areas;
+
+        for (const auto& [base, size] : m_tracing) {
+            auto tracing_block_begin_va = base;
+            auto tracing_block_end_va = base + size;
+
+            auto va = tracing_block_begin_va;
+            auto next_reloc = m_libcc_interpreter.relocation_distribute().lower_bound(va);
+
+            while (va < tracing_block_end_va) {
+                if (next_reloc == m_libcc_interpreter.relocation_distribute().end() || tracing_block_end_va <= next_reloc->first) {
+                    reliable_areas.emplace_back(std::make_pair(va, static_cast<size_t>(tracing_block_end_va - va)));
+                    break;
+                } else {
+                    reliable_areas.emplace_back(std::make_pair(va, static_cast<size_t>(next_reloc->first - va)));
+                    va = next_reloc->first + next_reloc->second;
+                    ++next_reloc;
+                }
+            }
+        }
+
+        return reliable_areas;
     }
 
     patch_solution_since<16, 0, 7, 0>::patch_solution_since(elf64_interpreter& libcc_interpreter) :
@@ -336,6 +378,22 @@ namespace nkg {
             _emulator_append_external_api_impl(x64_emulator, "malloc", x64_assembler.assemble("ret;"));
 
             _emulator_append_external_api_impl(x64_emulator, "free", x64_assembler.assemble("ret;"));
+
+            _emulator_append_external_api_impl
+                (
+                    x64_emulator, "strlen",
+                    x64_assembler.assemble
+                        (
+                            "xor rcx, rcx;"
+                            "dec rcx;"
+                            "xor rax, rax;"
+                            "repne scasb byte ptr [rdi];"
+                            "not rcx;"
+                            "dec rcx;"
+                            "mov rax, rcx;"
+                            "ret;"
+                        )
+                );
 
             _emulator_append_external_api_impl
                 (
@@ -501,6 +559,27 @@ namespace nkg {
                         )
                 );
 
+            _emulator_append_external_api_impl
+                (
+                    x64_emulator, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv",
+                    x64_assembler.assemble
+                        (
+                            fmt::format
+                                (
+                                    "    mov rcx, qword ptr [rdi];"
+                                    "    lea rdx, qword ptr [rdi + 0x10];"
+                                    "    cmp rcx, rdx;"
+                                    "    je return;"
+                                    "    mov rdi, rcx;"
+                                    "    mov rax, {free:#016x};"
+                                    "    call rax;"
+                                    "return:"
+                                    "    ret",
+                                    fmt::arg("free", external_api_impl["free"])
+                                )
+                        )
+                );
+
             x64_emulator.hook_add<UC_HOOK_CODE>
                 (std::bind(&patch_solution_since::_emulator_dl_runtime_resolve_handler, this, std::ref(x64_emulator), std::placeholders::_1, std::placeholders::_2), external_api_impl["dl_runtime_resolve"], external_api_impl["dl_runtime_resolve"]);
 
@@ -514,9 +593,6 @@ namespace nkg {
         // set page fault handler
         x64_emulator.hook_add<UC_HOOK_MEM_UNMAPPED>
             (std::bind(&patch_solution_since::_emulator_page_fault_handler, this, std::ref(x64_emulator), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
-
-        // print all instructions' address
-        // x64_emulator.hook_add<UC_HOOK_CODE>([](uint64_t address, size_t size) { printf("code_trace, address = 0x%016lx\n", address); });
 
         // set rbp, rsp
         uint64_t init_rbp = x64_emulator.context_get<uint64_t>("stack_base") - x64_emulator.context_get<size_t>("stack_size") / 4;
@@ -533,6 +609,40 @@ namespace nkg {
         uint64_t init_rdi = init_rsp + 0x40;    // a pointer to stack memory which stores return value
         x64_emulator.reg_write(UC_X86_REG_RDI, &init_rdi);
 
+        std::list<std::pair<elf64_interpreter::va_t, size_t>> tracing;
+        x64_emulator.hook_add<UC_HOOK_CODE>(
+            [&x64_emulator, &tracing, stack_frame_index = 0](uint64_t address, size_t size) mutable {
+                std::byte instruction_data[16]; // a x86-64 instruction is 16-bytes long at most
+                x64_emulator.mem_read(address, instruction_data, size);
+
+                if (stack_frame_index == 0) {
+                    if (tracing.size() > 0 && tracing.back().first + tracing.back().second == address) {
+                        tracing.back().second += size;
+                    } else {
+                        tracing.emplace_back(std::make_pair(address, size));
+                    }
+                }
+
+                bool is_near_call = 
+                    instruction_data[0] == std::byte{ 0xe8 } ||
+                    instruction_data[0] == std::byte{ 0xff } && (instruction_data[1] & std::byte{ 0b00111000 }) == std::byte{ 0b00010000 }; // FF /2
+
+                if (is_near_call) {
+                    ++stack_frame_index;
+                    return;
+                }
+
+                bool is_near_ret = 
+                    instruction_data[0] == std::byte{ 0xc2 } ||
+                    instruction_data[0] == std::byte{ 0xc3 };
+
+                if (is_near_ret) {
+                    --stack_frame_index;
+                    return;
+                }
+            }
+        );
+
         // start emulate
         try {
             x64_emulator.emu_start(x64_emulator.context_get<uint64_t>("start_address"), x64_emulator.context_get<uint64_t>("dead_address"));
@@ -542,12 +652,55 @@ namespace nkg {
             return false;
         }
 
+        if (m_va_pltgot_std_string_append == 0) {
+            if (m_libcc_interpreter.elf_dynamic_pltrel().value() == DT_REL) {
+                auto jmp_reloc_table = m_libcc_interpreter.convert_va_to_ptr<Elf64_Rel*>(m_libcc_interpreter.elf_dynamic_jmprel().value());
+                auto jmp_reloc_table_size = m_libcc_interpreter.elf_dynamic_pltrelsz().value() / sizeof(Elf64_Rel);
+                auto symbol_table = m_libcc_interpreter.convert_va_to_ptr<Elf64_Sym*>(m_libcc_interpreter.elf_dynamic_symtab().value());
+                auto string_table = m_libcc_interpreter.convert_va_to_ptr<char*>(m_libcc_interpreter.elf_dynamic_strtab().value());
+
+                for (size_t i = 0; i < jmp_reloc_table_size; ++i) {
+                    auto reloc_va = jmp_reloc_table[i].r_offset;
+                    auto reloc_sym = &symbol_table[ELF64_R_SYM(jmp_reloc_table[i].r_info)];
+                    auto reloc_type = ELF64_R_TYPE(jmp_reloc_table[i].r_info);
+                    auto reloc_sym_name = &string_table[reloc_sym->st_name];
+
+                    if (strcmp(reloc_sym_name, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc") == 0) {
+                        m_va_pltgot_std_string_append = reloc_va;
+                        break;
+                    }
+                }
+            } else {    // m_libcc_interpreter.elf_dynamic_pltrel().value() == DT_RELA
+                auto jmp_reloc_table = m_libcc_interpreter.convert_va_to_ptr<Elf64_Rela*>(m_libcc_interpreter.elf_dynamic_jmprel().value());
+                auto jmp_reloc_table_size = m_libcc_interpreter.elf_dynamic_pltrelsz().value() / sizeof(Elf64_Rela);
+                auto symbol_table = m_libcc_interpreter.convert_va_to_ptr<Elf64_Sym*>(m_libcc_interpreter.elf_dynamic_symtab().value());
+                auto string_table = m_libcc_interpreter.convert_va_to_ptr<char*>(m_libcc_interpreter.elf_dynamic_strtab().value());
+
+                for (size_t i = 0; i < jmp_reloc_table_size; ++i) {
+                    auto reloc_va = jmp_reloc_table[i].r_offset;
+                    auto reloc_sym = &symbol_table[ELF64_R_SYM(jmp_reloc_table[i].r_info)];
+                    auto reloc_type = ELF64_R_TYPE(jmp_reloc_table[i].r_info);
+                    auto reloc_sym_name = &string_table[reloc_sym->st_name];
+
+                    if (strcmp(reloc_sym_name, "_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc") == 0) {
+                        m_va_pltgot_std_string_append = reloc_va;
+                        break;
+                    }
+                }
+            }
+        }
+
         if (m_va_pltgot_std_string_append) {
             printf("[*] patch_solution_since<16, 0, 7, 0>: m_va_pltgot_std_string_append = 0x%016lx\n", m_va_pltgot_std_string_append);
         } else {
             printf("[*] patch_solution_since<16, 0, 7, 0>: std::string::append(const char*) is not found.\n");
             printf("[-] patch_solution_since<16, 0, 7, 0>: This patch solution will be suppressed.\n");
             return false;
+        }
+
+        m_tracing = std::move(tracing);
+        for (const auto& [a, b] : m_tracing) {
+            printf("0x%016lx, %zu\n", a, b);
         }
 
         //
@@ -617,43 +770,49 @@ namespace nkg {
                 );
         }
         patch_code_chunks.emplace_back("mov rsi, rsp;");
-        patch_code_chunks.emplace_back(fmt::format("call qword ptr [{:#016x}];", m_va_pltgot_std_string_append));
+        patch_code_chunks.emplace_back(fmt::format("call qword ptr [{:#016x}];", m_va_pltgot_std_string_append));   // keystone will emit `call qword ptr [rip+xxx]` here
         patch_code_chunks.emplace_back("leave;");
         patch_code_chunks.emplace_back("ret;");
 
-        std::vector<uint8_t> assembled_patch_code;
-        {
-            keystone_assembler x86_assembler{ KS_ARCH_X86, KS_MODE_64 };
+        auto x86_assembler = keystone_assembler{ KS_ARCH_X86, KS_MODE_64 };
+        auto reliable_areas = _calculate_reliable_areas();
 
-            auto current_va = m_va_CSRegistrationInfoFetcher_LINUX_GenerateRegistrationKey;
-            auto next_reloc = m_libcc_interpreter.relocation_distribute().lower_bound(current_va);
-            for (const auto& patch_code_chunk : patch_code_chunks) {
+        auto current_va = m_va_CSRegistrationInfoFetcher_LINUX_GenerateRegistrationKey;
+        auto current_ptr = m_libcc_interpreter.convert_va_to_ptr<uint8_t*>(current_va);
+
+        auto current_reliable_area = reliable_areas.begin();
+        auto current_reliable_area_begin_va = current_reliable_area->first;
+        auto current_reliable_area_end_va = current_reliable_area_begin_va + current_reliable_area->second;
+
+        for (const auto& patch_code_chunk : patch_code_chunks) {
+            while (true) { 
                 auto assembled_patch_code_chunk = x86_assembler.assemble(patch_code_chunk, current_va);
+                constexpr size_t jmp_code_max_size = 1 + sizeof(uint32_t);
 
-                while (true) {
-                    auto next_reloc_va = next_reloc != m_libcc_interpreter.relocation_distribute().end() ? next_reloc->first : 0xffffffffffffffff;
-                    auto next_reloc_size = next_reloc != m_libcc_interpreter.relocation_distribute().end() ? next_reloc->second : 0;
-
-                    if (current_va + assembled_patch_code_chunk.size() + 2 <= next_reloc_va) {     // 2 -> size of machine code "jmp rel8"
-                        assembled_patch_code.insert(assembled_patch_code.end(), assembled_patch_code_chunk.begin(), assembled_patch_code_chunk.end());
-                        current_va += assembled_patch_code_chunk.size();
-                        break;
-                    } else if (current_va + 2 <= next_reloc_va) {
-                        auto next_va = next_reloc_va + next_reloc_size;
-                        auto assembled_jmp = x86_assembler.assemble(fmt::format("jmp {:#016x};", next_va), current_va);
-                        auto assembled_padding = std::vector<uint8_t>(next_va - (current_va + assembled_jmp.size()), 0x90);     // 0x90 -> nop
-                        assembled_patch_code.insert(assembled_patch_code.end(), assembled_jmp.begin(), assembled_jmp.end());
-                        assembled_patch_code.insert(assembled_patch_code.end(), assembled_padding.begin(), assembled_padding.end());
-                        current_va = next_va;
-                        ++next_reloc;
-                    } else {
-                        __builtin_unreachable();    // impossible to reach here
+                if (current_reliable_area_begin_va <= current_va && current_va + assembled_patch_code_chunk.size() + jmp_code_max_size <= current_reliable_area_end_va) {
+                    memcpy(current_ptr, assembled_patch_code_chunk.data(), assembled_patch_code_chunk.size());
+                    current_va += assembled_patch_code_chunk.size();
+                    current_ptr += assembled_patch_code_chunk.size();
+                    break;
+                } else {
+                    auto next_reliable_area = std::next(current_reliable_area);
+                    while (next_reliable_area->second < 0x10) {
+                        next_reliable_area = std::next(next_reliable_area);
                     }
+
+                    auto assembled_jmp = x86_assembler.assemble(fmt::format("jmp {:#016x};", next_reliable_area->first), current_va);
+
+                    memcpy(current_ptr, assembled_jmp.data(), assembled_jmp.size());
+                    current_va = next_reliable_area->first;
+                    current_ptr = m_libcc_interpreter.convert_va_to_ptr<uint8_t*>(next_reliable_area->first);
+
+                    current_reliable_area = next_reliable_area;
+                    current_reliable_area_begin_va = current_reliable_area->first;
+                    current_reliable_area_end_va = current_reliable_area_begin_va + current_reliable_area->second;
                 }
             }
         }
 
-        memcpy(CSRegistrationInfoFetcher_LINUX_GenerateRegistrationKey, assembled_patch_code.data(), assembled_patch_code.size());
         printf("[*] patch_solution_since<16, 0, 7, 0>: Patch has been done.\n");
     }
 }
