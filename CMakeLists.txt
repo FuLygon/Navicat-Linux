@@ -21,8 +21,8 @@ FetchContent_Declare(
 )
 FetchContent_Declare(
     unicorn
-        URL "https://github.com/unicorn-engine/unicorn/archive/refs/tags/1.0.3.tar.gz"
-        URL_HASH "SHA256=64fba177dec64baf3f11c046fbb70e91483e029793ec6a3e43b028ef14dc0d65"
+        URL "https://github.com/unicorn-engine/unicorn/archive/refs/tags/2.0.0.tar.gz"
+        URL_HASH "SHA256=67b445c760e2bbac663e8c8bc410e43311c7fc92df4dfa8d90e06a021d07f634"
 )
 FetchContent_MakeAvailable(keystone unicorn)
 
