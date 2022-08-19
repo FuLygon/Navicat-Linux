@@ -699,9 +699,6 @@ namespace nkg {
         }
 
         m_tracing = std::move(tracing);
-        for (const auto& [a, b] : m_tracing) {
-            printf("0x%016lx, %zu\n", a, b);
-        }
 
         //
         // get result

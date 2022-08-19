@@ -25,7 +25,7 @@ namespace nkg {
 void welcome() {
     puts("***************************************************");
     puts("*       navicat-keygen by @DoubleLabyrinth        *");
-    puts("*                version: 16.0.7.0-2              *");
+    puts("*                version: 16.0.7.0-3              *");
     puts("***************************************************");
     puts("");
 }
