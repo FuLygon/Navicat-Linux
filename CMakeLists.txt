@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.18)
 project(navicat-keygen)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(fmt REQUIRED)
-find_package(RapidJSON REQUIRED)
+# find_package(RapidJSON REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 include(FetchContent)
@@ -90,4 +91,4 @@ target_link_libraries(navicat-keygen fmt::fmt OpenSSL::Crypto)
 
 add_executable(navicat-patcher ${NKG_COMMON_SOURCE} ${NKG_PATCHER_SOURCE})
 target_include_directories(navicat-patcher PRIVATE ./common ${keystone_SOURCE_DIR}/include)
-target_link_libraries(navicat-patcher fmt::fmt OpenSSL::Crypto keystone unicorn pthread)
+target_link_libraries(navicat-patcher fmt::fmt OpenSSL::Crypto keystone unicorn pthread stdc++fs)
