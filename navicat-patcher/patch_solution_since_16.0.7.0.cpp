@@ -1,4 +1,5 @@
 #include "patch_solution_since_16.0.7.0.hpp"
+#include <cstddef>
 #include <regex>
 #include "keystone_assembler.hpp"
 #include <fmt/format.h>
