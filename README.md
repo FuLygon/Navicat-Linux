@@ -4,9 +4,11 @@ Support up to Navicat 15.
 
 ## 1. Prerequisties
 
+
 Assuming everything was downloaded in downloads directory (Example: `~/Downloads/`).
 
    * [git](https://git-scm.com/downloads/)
+   * sudo apt-get install libssl-dev
    * [Navicat 15](https://www.navicat.com/en/download/navicat-premium)
    * capstone
    * [keystone](https://github.com/keystone-engine/keystone)
