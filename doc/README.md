@@ -7,7 +7,7 @@ Support up to Navicat 15.
 Assuming everything was downloaded in downloads directory (Example: `~/Downloads/`).
 
 - [git](https://git-scm.com/downloads/)
-- sudo apt-get install libssl-dev
+- libssl-dev
 - [Navicat 15](https://www.navicat.com/en/download/navicat-premium)
 - capstone
 - [keystone](https://github.com/keystone-engine/keystone)
@@ -15,17 +15,14 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 - [clone this repository](https://github.com/FuLygon/Navicat-Linux)
 
 ```bash
-# install git
-$ sudo apt install git
+# install dependencies
+$ sudo apt install git libssl-dev libcapstone-dev cmake rapidjson-dev
 
 # download navicat 15 from official website
 > https://www.navicat.com/en/download/navicat-premium
 
-# install capstone
-$ sudo apt install libcapstone-dev
-
 # install keystone
-$ sudo apt-get install cmake
+$ sudo apt-get install
 $ git clone https://github.com/keystone-engine/keystone.git
 $ cd keystone
 $ mkdir build
@@ -33,9 +30,6 @@ $ cd build
 $ ../make-share.sh
 $ sudo make install
 $ sudo ldconfig
-
-# install rapidjson
-$ sudo apt-get install rapidjson-dev
 
 # clone this repository
 $ git clone https://github.com/FuLygon/Navicat-Linux.git
