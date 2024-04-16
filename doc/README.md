@@ -4,43 +4,42 @@ Support up to Navicat 15.
 
 ## 1. Prerequisties
 
-
 Assuming everything was downloaded in downloads directory (Example: `~/Downloads/`).
 
-   * [git](https://git-scm.com/downloads/)
-   * sudo apt-get install libssl-dev
-   * [Navicat 15](https://www.navicat.com/en/download/navicat-premium)
-   * capstone
-   * [keystone](https://github.com/keystone-engine/keystone)
-   * rapidjson
-   * [clone this repository](https://github.com/FuLygon/Navicat-Linux)
+- [git](https://git-scm.com/downloads/)
+- sudo apt-get install libssl-dev
+- [Navicat 15](https://www.navicat.com/en/download/navicat-premium)
+- capstone
+- [keystone](https://github.com/keystone-engine/keystone)
+- rapidjson
+- [clone this repository](https://github.com/FuLygon/Navicat-Linux)
 
-   ```bash
-   # install git
-   $ sudo apt install git
+```bash
+# install git
+$ sudo apt install git
 
-   # download navicat 15 from official website
-   > https://www.navicat.com/en/download/navicat-premium
+# download navicat 15 from official website
+> https://www.navicat.com/en/download/navicat-premium
 
-   # install capstone
-   $ sudo apt install libcapstone-dev
+# install capstone
+$ sudo apt install libcapstone-dev
 
-   # install keystone
-   $ sudo apt-get install cmake
-   $ git clone https://github.com/keystone-engine/keystone.git
-   $ cd keystone
-   $ mkdir build
-   $ cd build
-   $ ../make-share.sh
-   $ sudo make install
-   $ sudo ldconfig
+# install keystone
+$ sudo apt-get install cmake
+$ git clone https://github.com/keystone-engine/keystone.git
+$ cd keystone
+$ mkdir build
+$ cd build
+$ ../make-share.sh
+$ sudo make install
+$ sudo ldconfig
 
-   # install rapidjson
-   $ sudo apt-get install rapidjson-dev
+# install rapidjson
+$ sudo apt-get install rapidjson-dev
 
-   # clone this repository
-   $ git clone https://github.com/FuLygon/Navicat-Linux.git
-   ```
+# clone this repository
+$ git clone https://github.com/FuLygon/Navicat-Linux.git
+```
 
 ## 2. Installing Navicat
 
@@ -62,14 +61,17 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 ## 3. Patching Navicat
 
 1. Build Navicat keygen & patcher.
+
    ```bash
    $ cd ~/Downloads/navicat-linux
    $ make all
    ```
+
    You will see executable files `navicat-patcher` and `navicat-keygen` in `bin/` directory.
 
 2. Patching Navicat.  
    Use `navicat-patcher` to replace official public key.
+
    ```
    Usage:
       navicat-patcher [--dry-run] <Navicat Installation Path> [RSA-2048 Private Key File]
@@ -83,12 +85,16 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
          [RSA-2048 Private Key File]   Path to a PEM-format RSA-2048 private key file.
                                        This parameter is optional.
    ```
-   __Example:__
+
+   **Example:**
+
    ```bash
    $ cd ~/Downloads/navicat-linux/bin
    $ ./navicat-patcher /opt/navicat
    ```
-   __Output:__
+
+   **Output:**
+
    ```console
    **********************************************************
    *       Navicat Patcher (Linux) by @DoubleLabyrinth      *
@@ -213,10 +219,10 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 
    [*] Previous:
    +0x000000000136f2b0  44 0f b6 24 18 48 8b 44 24 28 8b 50 f8 85 d2 79  D..$.H.D$(.P...y
-   +0x000000000136f2c0  6f                                               o               
+   +0x000000000136f2c0  6f                                               o
    [*] After:
    +0x000000000136f2b0  45 31 e4 48 8d 05 aa bf 5a 01 90 90 90 90 90 90  E1.H....Z.......
-   +0x000000000136f2c0  90                                               .               
+   +0x000000000136f2c0  90                                               .
 
    [*] New RSA-2048 private key has been saved to
       /home/fulygon/Downloads/navicat-keygen-tools-linux/bin/RegPrivateKey.pem
@@ -226,17 +232,19 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    *                  HAVE FUN AND ENJOY~                *
    *******************************************************
    ```
-3. Open Navicat.  
+
+3. Open Navicat.
    ```bash
    $ /opt/navicat/AppRun
    ```
-   If you can't open navicat, Try  
+   If you can't open navicat, Try
    ```bash
    $ sudo chmod +x /opt/navicat/AppRun
    ```
    After Navicat was opened, choose `Register` (Or `Help` > `Registeration`).
 4. Generate key.
-   Use `navicat-keygen` to generate __snKey__ and __Activation Code__.
+   Use `navicat-keygen` to generate **snKey** and **Activation Code**.
+
    ```
    Usage:
     navicat-keygen <--bin|--text> [--adv] <RSA-2048 Private Key File>
@@ -251,12 +259,16 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
         <RSA-2048 Private Key File>   A path to an RSA-2048 private key file.
                                       This parameter must be specified.
    ```
-   __Example:__
+
+   **Example:**
+
    ```bash
    $ cd ~/Downloads/navicat-linux/bin
    $ ./navicat-keygen --text ./RegPrivateKey.pem
    ```
-   You will be asked to select Navicat language and give major version number. After that an randomly generated __snKey__ will be given.
+
+   You will be asked to select Navicat language and give major version number. After that an randomly generated **snKey** will be given.
+
    ```console
    fulygon@Y530:~/Downloads/navicat-linux/bin$ ./navicat-keygen --text RegPrivateKey.pem
    **********************************************************
@@ -301,19 +313,22 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 
    [*] Your name:
    ```
-   You can use this snKey to activate your Navicat preliminarily.    
+
+   You can use this snKey to activate your Navicat preliminarily.  
    Then you will be asked to input `Your name` and `Your organization`. Just set them whatever you want, but not too long.
+
    ```
    [*] Your name: FuLygon
    [*] Your organization: ORG
 
    [*] Input request code in Base64: (Double press ENTER to end)
    ```
-   After that, you will be asked to input request code. Now __DO NOT CLOSE KEYGEN__.
 
-5. __Disconnect your network__. Find and click `Registration`. 
-   
-   Fill license key by __Serial number__ that the keygen gave and click `Activate`.
+   After that, you will be asked to input request code. Now **DO NOT CLOSE KEYGEN**.
+
+5. **Disconnect your network**. Find and click `Registration`.
+
+   Fill license key by **Serial number** that the keygen gave and click `Activate`.
 
 6. Generally online activation will fail and Navicat will ask you do `Manual Activation`, just choose it.
 
@@ -333,13 +348,14 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    MA8K14dWu9moX3IOS11Lyrgx0zUQgVmwAr149hjAyvDA+5BmdAIvDA04xPO8GvJJOitQe6Io7pp0Q4PLoRxLKCOoORE639izTv9k4P2gSndERI31vLPLWxPcXj4SIEtYLKKpu7jxx5eS9fax3HNtaVyeFK4jWykBgBkUCCzZlI33xaau7mKHgpfEFtgzn0F9ilrWRrzNhIzvz/Q7IDVvLm/7BtTbfHCw2+HkIrQgeaKC/nJ9wFYPhs/A0Z6pSULVuZI/bt/HYB+i6i3nW6hY/ZywF29PnSm6IxKtTIjpkAcXthtR3P2/eMIcFiuTcjCXurGNgbUj7iQ/4draNiWdjA==
    ```
 
-8. Finally, you will get __Activation Code__ which looks like a Base64 string. 
+8. Finally, you will get **Activation Code** which looks like a Base64 string.
 
-   Just copy it and paste it in Navicat `Manual Activation` window, then click `Activate`. 
-   
+   Just copy it and paste it in Navicat `Manual Activation` window, then click `Activate`.
+
    If nothing wrong, activation should be done successfully.
 
 ## 4. Create Navicat shortcut (Optional)
+
 1. Add shortcut to menu.  
    Open `navicat.desktop` located in `/opt/navicat`, edit these line:
    ```

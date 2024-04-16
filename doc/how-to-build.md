@@ -6,9 +6,9 @@
 
 1. Please make sure you have installed following libraries:
 
-   * `capstone`
-   * `keystone`
-   * `rapidjson`
+   - `capstone`
+   - `keystone`
+   - `rapidjson`
 
    If you use Ubuntu, you can install them by:
 
@@ -35,9 +35,9 @@
 ## 2. Build
 
 ```console
-$ git clone -b linux --single-branch https://github.com/DoubleLabyrinth/navicat-keygen.git
-$ cd navicat-keygen
+$ git clone -b linux --single-branch https://github.com/FuLygon/Navicat-Linux.git
+$ cd Navicat-Linux
 $ make all
 ```
 
-You will see executable files in `bin/` directory. 
+You will see executable files in `bin/` directory.

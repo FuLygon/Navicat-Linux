@@ -4,9 +4,9 @@
 
 1. 请确保你安装了下面几个库：
 
-   * `capstone`
-   * `keystone`
-   * `rapidjson`
+   - `capstone`
+   - `keystone`
+   - `rapidjson`
 
    你可以通过下面的命令来安装它们：
 
@@ -28,14 +28,14 @@
    $ sudo apt-get install rapidjson-dev
    ```
 
-2. 你的gcc支持C++17特性。 
+2. 你的 gcc 支持 C++17 特性。
 
 ## 2. 编译
 
 ```console
-$ git clone -b linux --single-branch https://github.com/DoubleLabyrinth/navicat-keygen.git
-$ cd navicat-keygen
+$ git clone -b linux --single-branch https://github.com/FuLygon/Navicat-Linux.git
+$ cd Navicat-Linux
 $ make all
 ```
 
-生成完成后，你会在 `bin/` 文件夹下看到编译后的keygen/patcher。
+生成完成后，你会在 `bin/` 文件夹下看到编译后的 keygen/patcher。
