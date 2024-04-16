@@ -68,7 +68,7 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    ```
    You will see executable files `navicat-patcher` and `navicat-keygen` in `bin/` directory.
 
-2. Patching Navicat.  
+2. Patching Navicat.
    Use `navicat-patcher` to replace official public key.
    ```
    Usage:
@@ -213,10 +213,10 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 
    [*] Previous:
    +0x000000000136f2b0  44 0f b6 24 18 48 8b 44 24 28 8b 50 f8 85 d2 79  D..$.H.D$(.P...y
-   +0x000000000136f2c0  6f                                               o               
+   +0x000000000136f2c0  6f                                               o
    [*] After:
    +0x000000000136f2b0  45 31 e4 48 8d 05 aa bf 5a 01 90 90 90 90 90 90  E1.H....Z.......
-   +0x000000000136f2c0  90                                               .               
+   +0x000000000136f2c0  90                                               .
 
    [*] New RSA-2048 private key has been saved to
       /home/fulygon/Downloads/navicat-keygen-tools-linux/bin/RegPrivateKey.pem
@@ -226,11 +226,11 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    *                  HAVE FUN AND ENJOY~                *
    *******************************************************
    ```
-3. Open Navicat.  
+3. Open Navicat.
    ```bash
    $ /opt/navicat/AppRun
    ```
-   If you can't open navicat, Try  
+   If you can't open navicat, Try
    ```bash
    $ sudo chmod +x /opt/navicat/AppRun
    ```
@@ -301,7 +301,7 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
 
    [*] Your name:
    ```
-   You can use this snKey to activate your Navicat preliminarily.    
+   You can use this snKey to activate your Navicat preliminarily.
    Then you will be asked to input `Your name` and `Your organization`. Just set them whatever you want, but not too long.
    ```
    [*] Your name: FuLygon
@@ -311,8 +311,8 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    ```
    After that, you will be asked to input request code. Now __DO NOT CLOSE KEYGEN__.
 
-5. __Disconnect your network__. Find and click `Registration`. 
-   
+5. __Disconnect your network__. Find and click `Registration`.
+
    Fill license key by __Serial number__ that the keygen gave and click `Activate`.
 
 6. Generally online activation will fail and Navicat will ask you do `Manual Activation`, just choose it.
@@ -333,14 +333,14 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    MA8K14dWu9moX3IOS11Lyrgx0zUQgVmwAr149hjAyvDA+5BmdAIvDA04xPO8GvJJOitQe6Io7pp0Q4PLoRxLKCOoORE639izTv9k4P2gSndERI31vLPLWxPcXj4SIEtYLKKpu7jxx5eS9fax3HNtaVyeFK4jWykBgBkUCCzZlI33xaau7mKHgpfEFtgzn0F9ilrWRrzNhIzvz/Q7IDVvLm/7BtTbfHCw2+HkIrQgeaKC/nJ9wFYPhs/A0Z6pSULVuZI/bt/HYB+i6i3nW6hY/ZywF29PnSm6IxKtTIjpkAcXthtR3P2/eMIcFiuTcjCXurGNgbUj7iQ/4draNiWdjA==
    ```
 
-8. Finally, you will get __Activation Code__ which looks like a Base64 string. 
+8. Finally, you will get __Activation Code__ which looks like a Base64 string.
 
-   Just copy it and paste it in Navicat `Manual Activation` window, then click `Activate`. 
-   
+   Just copy it and paste it in Navicat `Manual Activation` window, then click `Activate`.
+
    If nothing wrong, activation should be done successfully.
 
 ## 4. Create Navicat shortcut (Optional)
-1. Add shortcut to menu.  
+1. Add shortcut to menu.
    Open `navicat.desktop` located in `/opt/navicat`, edit these line:
    ```
    Icon=/opt/navicat/navicat-icon.png
@@ -356,7 +356,7 @@ Assuming everything was downloaded in downloads directory (Example: `~/Downloads
    ```bash
    $ sudo cp /opt/navicat/navicat.desktop /usr/share/applications
    ```
-2. Create custom terminal command to open Navicat.  
+2. Create custom terminal command to open Navicat.
    Add this line to your .bashrc file (default ubuntu bashrc file location is in `~/.bashrc`).
    ```bash
    alias navicat='/opt/navicat/AppRun'

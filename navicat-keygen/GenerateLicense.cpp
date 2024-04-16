@@ -1,38 +1,46 @@
-#include "Exception.hpp"
-#include "ExceptionGeneric.hpp"
-#include "ResourceWrapper.hpp"
-#include "ResourceTraitsOpenssl.hpp"
-#include "RSACipher.hpp"
-#include "Base64.hpp"
-#include "SerialNumberGenerator.hpp"
-
 #include <iostream>
 #include <ctime>
+#include <fmt/format.h>
+#include <fcntl.h>
+
+#include "exceptions/operation_canceled_exception.hpp"
+#include "exceptions/unix_exception.hpp"
+
+#include "resource_wrapper.hpp"
+#include "resource_traits/unix_os/file_descriptor.hpp"
+
+#include "rsa_cipher.hpp"
+#include "navicat_serial_generator.hpp"
+#include "base64_rfc4648.hpp"
+
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
+#define NKG_CURRENT_SOURCE_FILE() u8".\\navicat-keygen\\GenerateLicense.cpp"
+#define NKG_CURRENT_SOURCE_LINE() __LINE__
+
 namespace nkg {
 
-    void GenerateLicenseText(const RSACipher& Cipher, const SerialNumberGenerator& Generator) {
-        std::string utf8username;
-        std::string utf8organization;
+    void GenerateLicenseText(const rsa_cipher& cipher, const navicat_serial_generator& sn_generator) {
+        std::string u8_username;
+        std::string u8_organization;
 
-        std::string b64RequestCode;
-        std::vector<uint8_t> RequestCode;
-        std::string utf8RequestInfo;
-        std::string utf8ResponseInfo;
-        std::vector<uint8_t> ResponseCode;
-        std::string b64ResponseCode;
+        std::string b64_request_code;
+        std::vector<uint8_t> request_code;
+        std::string u8_request_info;
+        std::string u8_response_info;
+        std::vector<uint8_t> response_code;
+        std::string b64_response_code;
 
         std::cout << "[*] Your name: ";
-        if (!std::getline(std::cin, utf8username)) {
-            throw ARL::EOFError(__BASE_FILE__, __LINE__, "Abort.");
+        if (!std::getline(std::cin, u8_username)) {
+            throw exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Operation is canceled by user.");
         }
 
         std::cout << "[*] Your organization: ";
-        if (!std::getline(std::cin, utf8organization)) {
-            throw ARL::EOFError(__BASE_FILE__, __LINE__, "Abort.");
+        if (!std::getline(std::cin, u8_organization)) {
+            throw exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Operation is canceled by user.");
         }
 
         std::cout << std::endl;
@@ -41,29 +49,26 @@ namespace nkg {
         while (true) {
             std::string temp;
             if (!std::getline(std::cin, temp)) {
-                throw ARL::EOFError(__BASE_FILE__, __LINE__, "Abort.");
+                throw exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Operation is canceled by user.");
             }
 
             if (temp.empty()) {
                 break;
             }
 
-            b64RequestCode.append(temp);
+            b64_request_code.append(temp);
         }
 
-        RequestCode = base64_decode(b64RequestCode);
-        if (RequestCode.size() != 256) {
-            throw ARL::AssertionError(__BASE_FILE__, __LINE__, "Broken request code. %zu", RequestCode.size());
+        request_code = base64_rfc4648::decode(b64_request_code);
+        if (request_code.size() != 256) {
+            throw ::nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), fmt::format("Broken request code. %zu", request_code.size()));
         }
 
-        utf8RequestInfo.resize((Cipher.Bits() + 7) / 8);
-        Cipher.Decrypt(RequestCode.data(), RequestCode.size(), utf8RequestInfo.data(), RSA_PKCS1_PADDING);
-        while (utf8RequestInfo.back() == '\x00') {
-            utf8RequestInfo.pop_back();
-        }
+        u8_request_info.resize((cipher.bits() + 7) / 8);
+        u8_request_info.resize(cipher.private_decrypt(request_code.data(), request_code.size(), u8_request_info.data(), RSA_PKCS1_PADDING));
 
         std::cout << "[*] Request Info:" << std::endl;
-        std::cout << utf8RequestInfo << std::endl;
+        std::cout << u8_request_info << std::endl;
         std::cout << std::endl;
 
         rapidjson::Document json;
@@ -79,7 +84,7 @@ namespace nkg {
         //
         // Begin to parse
         //
-        json.Parse(utf8RequestInfo.c_str());
+        json.Parse(u8_request_info.c_str());
         //
         // Remove "Platform" info
         //
@@ -88,12 +93,12 @@ namespace nkg {
         // Set "Name" info
         //
         N_Key.SetString("N", 1);
-        N_Value.SetString(utf8username.c_str(), static_cast<rapidjson::SizeType>(utf8username.length()));
+        N_Value.SetString(u8_username.c_str(), static_cast<rapidjson::SizeType>(u8_username.length()));
         //
         // Set "Organization" info
         //
         O_Key.SetString("O", 1);
-        O_Value.SetString(utf8organization.c_str(), static_cast<rapidjson::SizeType>(utf8organization.length()));
+        O_Value.SetString(u8_organization.c_str(), static_cast<rapidjson::SizeType>(u8_organization.length()));
         //
         // Set "Time" info
         //
@@ -108,43 +113,42 @@ namespace nkg {
 
         json.Accept(writer);
         if (buffer.GetSize() > 240) {
-            throw ARL::Exception(__BASE_FILE__, __LINE__, "Response info is too long.");
+            throw ::nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Response Info is too long.");
         }
 
-        utf8ResponseInfo.assign(buffer.GetString(), buffer.GetSize());
+        u8_response_info.assign(buffer.GetString(), buffer.GetSize());
 
         std::cout << "[*] Response Info:" << std::endl;
-        std::cout << utf8ResponseInfo << std::endl;
+        std::cout << u8_response_info << std::endl;
         std::cout << std::endl;
 
-        ResponseCode.resize((Cipher.Bits() + 7) / 8);
-        Cipher.Encrypt<RSAKeyType::PrivateKey>(utf8ResponseInfo.data(), utf8ResponseInfo.size(), ResponseCode.data(), RSA_PKCS1_PADDING);
+        response_code.resize((cipher.bits() + 7) / 8);
+        response_code.resize(cipher.private_encrypt(u8_response_info.data(), u8_response_info.size(), response_code.data(), RSA_PKCS1_PADDING));
 
-        b64ResponseCode = base64_encode(ResponseCode);
+        b64_response_code = base64_rfc4648::encode(response_code);
 
         std::cout << "[*] Activation Code:" << std::endl;
-        std::cout << b64ResponseCode << std::endl;
+        std::cout << b64_response_code << std::endl;
         std::cout << std::endl;
     }
 
-    void GenerateLicenseBinary(const RSACipher& Cipher, const SerialNumberGenerator& Generator) {
-        ARL::ResourceWrapper LicenseFile{ ARL::ResourceTraits::OpensslBIO{} };
+    void GenerateLicenseBinary(const rsa_cipher& cipher, const navicat_serial_generator& sn_generator) {
+        std::string u8_serial_number = sn_generator.serial_number();
 
-        std::string utf8SerialNumber = Generator.GetSerialNumberShort();
-        std::string utf8username;
-        std::string utf8organization;
+        std::string u8_username;
+        std::string u8_organization;
 
-        std::string utf8ResponseInfo;
-        std::vector<uint8_t> ResponseCode;
+        std::string u8_response_info;
+        std::vector<uint8_t> response_code;
 
         std::cout << "[*] Your name: ";
-        if (!std::getline(std::cin, utf8username)) {
-            throw ARL::EOFError(__BASE_FILE__, __LINE__, "Abort.");
+        if (!std::getline(std::cin, u8_username)) {
+            throw exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Operation is canceled by user.");
         }
 
         std::cout << "[*] Your organization: ";
-        if (!std::getline(std::cin, utf8organization)) {
-            throw ARL::EOFError(__BASE_FILE__, __LINE__, "Abort.");
+        if (!std::getline(std::cin, u8_organization)) {
+            throw exceptions::operation_canceled_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Operation is canceled by user.");
         }
 
         std::cout << std::endl;
@@ -163,11 +167,11 @@ namespace nkg {
 
         json.Parse("{}");
         K_Key.SetString("K", 1);
-        K_Value.SetString(utf8SerialNumber.c_str(), static_cast<rapidjson::SizeType>(utf8SerialNumber.length()));
+        K_Value.SetString(u8_serial_number.c_str(), static_cast<rapidjson::SizeType>(u8_serial_number.length()));
         N_Key.SetString("N", 1);
-        N_Value.SetString(utf8username.c_str(), static_cast<rapidjson::SizeType>(utf8username.length()));
+        N_Value.SetString(u8_username.c_str(), static_cast<rapidjson::SizeType>(u8_username.length()));
         O_Key.SetString("O", 1);
-        O_Value.SetString(utf8organization.c_str(), static_cast<rapidjson::SizeType>(utf8organization.length()));
+        O_Value.SetString(u8_organization.c_str(), static_cast<rapidjson::SizeType>(u8_organization.length()));
         T_Key.SetString("T", 1);
         T_Value.SetUint(static_cast<unsigned int>(std::time(nullptr)));
 
@@ -178,28 +182,30 @@ namespace nkg {
 
         json.Accept(writer);
         if (buffer.GetSize() > 240) {
-            throw ARL::Exception(__BASE_FILE__, __LINE__, "Response info is too long.");
+            throw ::nkg::exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), u8"Response Info is too long.");
         }
 
-        utf8ResponseInfo.assign(buffer.GetString(), buffer.GetSize());
+        u8_response_info.assign(buffer.GetString(), buffer.GetSize());
 
         std::cout << "[*] Response Info:" << std::endl;
-        std::cout << utf8ResponseInfo << std::endl;
+        std::cout << u8_response_info << std::endl;
         std::cout << std::endl;
 
-        ResponseCode.resize((Cipher.Bits() + 7) / 8);
-        Cipher.Encrypt<RSAKeyType::PrivateKey>(utf8ResponseInfo.data(), utf8ResponseInfo.size(), ResponseCode.data(), RSA_PKCS1_PADDING);
+        response_code.resize((cipher.bits() + 7) / 8);
+        response_code.resize(cipher.private_encrypt(u8_response_info.data(), u8_response_info.size(), response_code.data(), RSA_PKCS1_PADDING));
 
-        LicenseFile.TakeOver(BIO_new_file("license_file", "w"));
-        if (LicenseFile.IsValid() == false) {
-            throw ARL::Exception(__BASE_FILE__, __LINE__, "BIO_new_file failed.");
+        resource_wrapper license_file{ resource_traits::unix_os::file_descriptor{}, open("license_file", O_WRONLY | O_CREAT | O_TRUNC, 0666) };
+        if (!license_file.is_valid()) {
+            throw exceptions::unix_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), errno, u8"open failed.");
         }
 
-        if (BIO_write(LicenseFile, ResponseCode.data(), ResponseCode.size()) != ResponseCode.size()) {
-            throw ARL::Exception(__BASE_FILE__, __LINE__, "BIO_write failed.");
+        if (write(license_file.get(), response_code.data(), response_code.size()) < 0) {
+            throw exceptions::unix_exception(NKG_CURRENT_SOURCE_FILE(), NKG_CURRENT_SOURCE_LINE(), errno, u8"write failed.");
         }
 
         std::cout << "[+] license_file has been generated." << std::endl;
     }
 }
 
+#undef NKG_CURRENT_SOURCE_FILE
+#undef NKG_CURRENT_SOURCE_LINE

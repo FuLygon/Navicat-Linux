@@ -1,41 +1,35 @@
-# Navicat Keygen - 如何编译？
+# navicat-keygen for linux - 如何编译？
 
 ## 1. 前提条件
 
-1. 请确保你安装了下面几个库：
+1. 安装最新的 `CMake`:
 
-   * `capstone`
-   * `keystone`
-   * `rapidjson`
-
-   你可以通过下面的命令来安装它们：
-
-   ```console
-   # install capstone
-   $ sudo apt-get install libcapstone-dev
-
-   # install keystone
+   ```bash
    $ sudo apt-get install cmake
-   $ git clone https://github.com/keystone-engine/keystone.git
-   $ cd keystone
-   $ mkdir build
-   $ cd build
-   $ ../make-share.sh
-   $ sudo make install
-   $ sudo ldconfig
-
-   # install rapidjson
-   $ sudo apt-get install rapidjson-dev
    ```
 
-2. 你的gcc支持C++17特性。 
+2. 安装 `fmt`、`OpenSSL` 和 `rapidjson`:
+
+   ```bash
+   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev
+   ```
 
 ## 2. 编译
 
-```console
-$ git clone -b linux --single-branch https://github.com/DoubleLabyrinth/navicat-keygen.git
-$ cd navicat-keygen
-$ make all
-```
+1. clone 仓库:
 
-生成完成后，你会在 `bin/` 文件夹下看到编译后的keygen/patcher。
+   ```bash
+   $ git clone https://github.com/FuLygon/Navicat-Linux.git
+   $ cd Navicat-Linux
+   ```
+
+2. 编译:
+
+   ```bash
+   $ mkdir build
+   $ cd build
+   $ cmake -DCMAKE_BUILD_TYPE=Release ..
+   $ cmake --build . -- -j4
+   ```
+
+   编译完后你会在 build 文件夹里看到两个可执行文件 `navicat-keygen` 和 `navicat-patcher`。

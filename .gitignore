@@ -1,8 +1,3 @@
-*/.DS_Store
-.vscode/*
-bin/*
-navicat-patcher/Elf64Crafter.hpp
-navicat-patcher/Elf64Crafter.cpp
-navicat-patcher/Elf64InterpreterAmd64.hpp
-navicat-patcher/Elf64InterpreterAmd64.cpp
-RegPrivateKey.pem
+.idea
+.vscode
+cmake-build-*
