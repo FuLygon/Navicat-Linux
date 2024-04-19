@@ -1,4 +1,4 @@
-# Navicat Installation & Patch
+# Navicat Patch & Keygen for Linux
 
 Support Navicat 16 and up to **16.1.8** (this patch will not work with the current latest version of Navicat 16).
 
