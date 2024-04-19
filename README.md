@@ -1,6 +1,8 @@
 # Navicat Installation & Patch
 
-Support up to Navicat 15.
+Support Navicat 16 and up to **16.1.8** (this patch will not work with the current latest version).
+
+For Navicat 15, use branch [15](https://github.com/FuLygon/Navicat-Linux/tree/15)
 
 # Installation methods
 
@@ -39,7 +41,7 @@ Continue the final step as usual until you at `Input request code in Base64`.
 
 ```shell
 [*] Input major version number:
-(range: 0 ~ 15, default: 12)> 15
+(range: 11 ~ 16, default: 16)> 16
 
 [*] Serial number:
 XXXX-XXXX-XXXX-XXXX
@@ -70,7 +72,7 @@ Your Navicat should be activated by now.
 
 Manual method documentation is unmaintained and might be outdated, or incompatible with some distros.
 
-See [docs](doc/README.md) or further detail
+See [docs](docs) or further detail
 
 # Credits
 
