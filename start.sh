@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 appimagetoolUrl='https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage'
 baseAppImage=$(ls | grep -i '\.AppImage$' | head -n 1)
@@ -24,7 +25,9 @@ fi
 # Build navicat patcher
 echo
 echo "Building Navicat Patcher..."
-make all
+cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . -- -j4
+cp navicat-patcher navicat-keygen /patcher/bin
+cd /patcher
 
 # Extract AppImage
 echo

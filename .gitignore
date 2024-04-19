@@ -1,5 +1,7 @@
+.idea
+.vscode
+cmake-build-*
 */.DS_Store
-.vscode/*
 bin/*
 navicat-patcher/Elf64Crafter.hpp
 navicat-patcher/Elf64Crafter.cpp

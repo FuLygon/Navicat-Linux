@@ -1,8 +1,4 @@
-FROM ubuntu:20.04
-
-WORKDIR /deps
-
-ENV DEBIAN_FRONTEND noninteractive
+FROM ubuntu:22.04
 
 RUN apt update && apt install -y \
     build-essential \
@@ -13,12 +9,10 @@ RUN apt update && apt install -y \
     python3 \
     libfmt-dev \
     libssl-dev \
-    libcapstone-dev \
     libfuse2 \
     appstream \
+    file \
     rapidjson-dev
-
-RUN git clone https://github.com/keystone-engine/keystone.git && mkdir -p keystone/build && cd keystone/build && ../make-share.sh && make install && ldconfig
 
 WORKDIR /patcher
 

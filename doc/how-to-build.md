@@ -1,43 +1,37 @@
-# Navicat Keygen - How to build?
+# navicat-keygen for linux - How to build?
 
 [中文版](how-to-build.zh-CN.md)
 
 ## 1. Prerequisites
 
-1. Please make sure you have installed following libraries:
+1. Install latest `CMake`:
 
-   - `capstone`
-   - `keystone`
-   - `rapidjson`
-
-   If you use Ubuntu, you can install them by:
-
-   ```console
-   # install capstone
-   $ sudo apt-get install libcapstone-dev
-
-   # install keystone
+   ```bash
    $ sudo apt-get install cmake
-   $ git clone https://github.com/keystone-engine/keystone.git
-   $ cd keystone
-   $ mkdir build
-   $ cd build
-   $ ../make-share.sh
-   $ sudo make install
-   $ sudo ldconfig
-
-   # install rapidjson
-   $ sudo apt-get install rapidjson-dev
    ```
 
-2. Your gcc supports C++17 feature.
+2. Install `fmt`, `OpenSSL` and `rapidjson`:
+
+   ```bash
+   $ sudo apt-get install libfmt-dev libssl-dev rapidjson-dev
+   ```
 
 ## 2. Build
 
-```console
-$ git clone -b linux --single-branch https://github.com/FuLygon/Navicat-Linux.git
-$ cd Navicat-Linux
-$ make all
-```
+1. Clone:
 
-You will see executable files in `bin/` directory.
+   ```bash
+   $ git clone https://github.com/FuLygon/Navicat-Linux.git
+   $ cd Navicat-Linux
+   ```
+
+2. Build:
+
+   ```bash
+   $ mkdir build
+   $ cd build
+   $ cmake -DCMAKE_BUILD_TYPE=Release ..
+   $ cmake --build . -- -j4
+   ```
+
+   Then you will see two executable files, `navicat-keygen` and `navicat-patcher`, in `build` directory.
