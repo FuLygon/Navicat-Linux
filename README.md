@@ -1,6 +1,6 @@
 # Navicat Installation & Patch
 
-Support Navicat 16 and up to **16.1.8** (this patch will not work with the current latest version).
+Support Navicat 16 and up to **16.1.8** (this patch will not work with the current latest version of Navicat 16).
 
 For Navicat 15, use branch [15](https://github.com/FuLygon/Navicat-Linux/tree/15)
 
