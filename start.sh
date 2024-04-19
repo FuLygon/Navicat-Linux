@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 appimagetoolUrl='https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage'
 baseAppImage=$(ls | grep -i '\.AppImage$' | head -n 1)
