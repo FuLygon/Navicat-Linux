@@ -1,0 +1,10 @@
+services:
+  patcher:
+    build:
+      context: .
+    privileged: true
+    command: /bin/bash ./start.sh
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./build:/patcher/bin
