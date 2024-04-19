@@ -72,7 +72,7 @@ Your Navicat should be activated by now.
 
 Manual method documentation is unmaintained and might be outdated, or incompatible with some distros.
 
-See [docs](docs) or further detail
+See [docs](docs) for further detail
 
 # Credits
 
