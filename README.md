@@ -13,7 +13,7 @@ Make sure [Docker](https://docs.docker.com/engine/install) is installed and runn
 Clone the repository.
 
 ```shell
-git clone -b https://github.com/FuLygon/Navicat-Linux.git && cd Navicat-Linux
+git clone -b 15 https://github.com/FuLygon/Navicat-Linux.git && cd Navicat-Linux
 ```
 
 Copy Navicat `AppImage` inside this directory.
