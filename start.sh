@@ -25,7 +25,9 @@ fi
 # Build navicat patcher
 echo
 echo "Building Navicat Patcher..."
-make all
+cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . -- -j4
+cp navicat-patcher navicat-keygen /patcher/bin
+cd /patcher
 
 # Extract AppImage
 echo
