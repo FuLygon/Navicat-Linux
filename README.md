@@ -1,4 +1,4 @@
-# Navicat Installation & Patch
+# Navicat Patch & Keygen for Linux
 
 Support up to Navicat 15.
 
